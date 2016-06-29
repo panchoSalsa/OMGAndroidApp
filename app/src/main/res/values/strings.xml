@@ -2,4 +2,6 @@
     <string name="app_name">OMGApplication</string>
     <string name="action_settings">Settings</string>
     <string name="textview">HelloWorld!!!!</string>
+    <string name="button">Update The TextView</string>
+    <string name="hint">A Name</string>
 </resources>
