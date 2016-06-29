@@ -22,10 +22,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
-
+import android.widget.AdapterView.OnItemClickListener;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView mainTextView;
     Button mainButton;
@@ -69,9 +69,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mainListView.setAdapter(mArrayAdapter);
 
         // 5. Set this activity to react to list items being pressed
-        mainListView.setOnItemClickListener(this);
+        mainListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Log the item's position and contents
+                // to the console in Debug
+                Log.d("DEBUG", position + ": " + mNameList.get(position));
+                mainListView.setSelector(R.drawable.listview_item_selection_effect);
+                mainListView.setItemChecked(position,true);
 
-        // 7. Greet the user, or ask for their name if new
+            }
+        });
+
+
+            // 7. Greet the user, or ask for their name if new
         displayWelcome();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -136,14 +147,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 6. The text you'd like to share has changed,
         // and you need to update
         setShareIntent();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Log the item's position and contents
-        // to the console in Debug
-        Log.d("DEBUG", position + ": " + mNameList.get(position));
-
     }
 
     public void displayWelcome() {
