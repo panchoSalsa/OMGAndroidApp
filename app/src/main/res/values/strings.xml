@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">OMGApplication</string>
     <string name="action_settings">Settings</string>
-    <string name="helloWorld">HelloWorld!!!!</string>
+    <string name="textview">HelloWorld!!!!</string>
 </resources>
