@@ -8,7 +8,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="?android:attr/activatedBackgroundIndicator">
 
     <TextView
         android:id="@+id/main_textview"
@@ -55,6 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:choiceMode="singleChoice"/>
 
 </LinearLayout>
