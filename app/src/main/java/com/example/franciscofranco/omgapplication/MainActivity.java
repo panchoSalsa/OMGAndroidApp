@@ -1,6 +1,7 @@
 package com.example.franciscofranco.omgapplication;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -32,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     TextView mainTextView;
     Button mainButton;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SharedPreferences mSharedPreferences;
 
     private static final String QUERY_URL = "http://openlibrary.org/search.json?q=";
+
+    ProgressDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mainListView.setAdapter(mJSONAdapter);
 
         // 5. Set this activity to react to list items being pressed
+        mainListView.setOnItemClickListener(this);
+
+        /*
         mainListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -92,8 +97,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mainListView.setSelector(R.drawable.listview_item_selection_effect);
                 mainListView.setItemChecked(position,true);
 
+
+
+
+                // 12. Now that the user's chosen a book, grab the cover data
+                JSONObject jsonObject = (JSONObject) mJSONAdapter.getItem(position);
+                String coverID = jsonObject.optString("cover_i","");
+
+                // create an Intent to take you over to a new DetailActivity
+                Intent detailIntent = new Intent(this, DetailActivity.class);
+
+                // pack away the data about the cover
+                // into your Intent before you head out
+                detailIntent.putExtra("coverID", coverID);
+
+                // TODO: add any other data you'd like as Extras
+
+                // start the next Activity using your prepared Intent
+                startActivity(detailIntent);
+
             }
-        });
+        });*/
 
 
             // 7. Greet the user, or ask for their name if new
@@ -110,6 +134,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setAction("Action", null).show();
             }
         });
+
+        mDialog = new ProgressDialog(this);
+        mDialog.setMessage("Searching for Book");
+        mDialog.setCancelable(false);
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Log the item's position and contents
+        // to the console in Debug
+//                Log.d("DEBUG", position + ": " + mNameList.get(position));
+//        mainListView.setSelector(R.drawable.listview_item_selection_effect);
+//        mainListView.setItemChecked(position,true);
+
+
+
+
+        // 12. Now that the user's chosen a book, grab the cover data
+        JSONObject jsonObject = (JSONObject) mJSONAdapter.getItem(position);
+        String coverID = jsonObject.optString("cover_i","");
+
+        // create an Intent to take you over to a new DetailActivity
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+
+        // pack away the data about the cover
+        // into your Intent before you head out
+        detailIntent.putExtra("coverID", coverID);
+
+        // TODO: add any other data you'd like as Extras
+
+        // start the next Activity using your prepared Intent
+        startActivity(detailIntent);
 
     }
 
@@ -238,6 +295,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Create a client to perform networking
         AsyncHttpClient client = new AsyncHttpClient();
 
+        // Show ProgressDialog to inform user that a task in the background is occurring
+        mDialog.show();
+
         // Have the client get a JSONArray of data
         // and define how to respond
         client.get(QUERY_URL + urlString,
@@ -249,6 +309,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // to announce your success
                         Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
 
+                        // 11. Dismiss the ProgressDialog
+                        mDialog.dismiss();
+
                         // 8. For now, just log results
 //                        Log.d("DEBUG", jsonObject.toString());
 
@@ -258,6 +321,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onFailure(int statusCode, Throwable throwable, JSONObject error) {
+                        // 11. Dismiss the ProgressDialog
+                        mDialog.dismiss();
+
                         // Display a "Toast" message
                         // to announce the failure
                         Toast.makeText(getApplicationContext(), "Error: " + statusCode + " " + throwable.getMessage(), Toast.LENGTH_LONG).show();
